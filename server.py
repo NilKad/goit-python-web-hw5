@@ -15,7 +15,7 @@ from get_currency import main as req_currency
 logging.basicConfig(level=logging.INFO)
 
 
-async def logger(message):
+async def logger_file(message):
     async with async_open("server.log", mode="a") as f:
         await f.write(f"{message}\n")
 
@@ -48,10 +48,13 @@ class ChatServer:
                 exchange = await req_currency([days, *currency])
                 date_stamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 message_logging = f"{date_stamp}: {ws.name} - {message}"
-                await logger(message_logging)
+
+                await logger_file(message_logging)
                 # asyncio.create_task(logger(message_logging))
-                
+                # logging.info("send to client currency")
+
                 await self.send_to_clients(json.dumps(exchange, indent=2))
+                # logging.info("send to client currency")
             elif message_ == "Hello server":
                 await self.send_to_clients("Hello client")
             else:
